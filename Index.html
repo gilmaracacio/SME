@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SME-CUIABÁ | Unidades de Ensino</title>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css"/>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+<script src="https://unpkg.com/leaflet-geometryutil@0.10.0/src/leaflet.geometryutil.js"></script>
+
+<style>
+*{box-sizing:border-box}
+:root{
+    --navy:#102b4e;
+    --blue:#2369a7;
+    --blue-deep:#174d82;
+    --sky:#eaf3fb;
+    --ink:#213247;
+    --muted:#6b7b8f;
+    --line:rgba(148,163,184,.28);
+    --panel:rgba(255,255,255,.94);
+    --shadow:0 14px 34px rgba(15,39,69,.16),0 3px 10px rgba(15,39,69,.08);
+}
+*{scrollbar-width:thin;scrollbar-color:#b8c9da transparent}
+html,body{margin:0;padding:0;height:100%;font-family:"Segoe UI",Inter,Arial,sans-serif;color:var(--ink);background:#e7eef5}
+#header{
+    height:76px;background:linear-gradient(110deg,#ffffff 0%,#f7fbff 60%,#edf5fc 100%);
+    display:flex;align-items:center;justify-content:space-between;padding:0 26px;
+    border-bottom:1px solid rgba(148,163,184,.3);box-shadow:0 5px 20px rgba(15,39,69,.12);
+    position:relative;z-index:1600
+}
+.brand{display:flex;align-items:center;gap:12px;min-width:280px}
+.brand-icon{
+    width:44px;height:44px;border-radius:14px;
+    background:linear-gradient(145deg,#102b4e,#2a78b9);
+    display:flex;align-items:center;justify-content:center;
+    color:white;font-size:22px;box-shadow:0 8px 18px rgba(16,72,119,.25);
+    border:1px solid rgba(255,255,255,.5)
+}
+.brand-glyph{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.brand h1{margin:0;color:var(--navy);font-size:18px;letter-spacing:.02em;font-weight:800}
+.brand small{display:block;color:var(--muted);font-size:12px;margin-top:3px;letter-spacing:.01em}
+#top-actions{display:flex;align-items:center;gap:7px}
+.search-wrap{position:relative}
+#buscaUnidade{
+    width:360px;padding:11px 42px 11px 15px;border:1px solid #c7d5e3;
+    border-radius:11px;outline:none;font-size:13px;background:rgba(255,255,255,.9);
+    color:var(--ink);box-shadow:0 3px 10px rgba(15,39,69,.05);transition:.2s
+}
+#buscaUnidade:focus{border-color:#1677c8;box-shadow:0 0 0 3px rgba(22,119,200,.12)}
+.search-icon{position:absolute;right:12px;top:9px;color:#64748b;font-size:18px}
+#btnBuscar{
+    border:0;background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;padding:11px 18px;
+    border-radius:11px;cursor:pointer;font-weight:700;box-shadow:0 7px 15px rgba(23,77,130,.2);transition:.2s
+}
+#btnBuscar:hover{transform:translateY(-1px);box-shadow:0 9px 18px rgba(23,77,130,.3)}
+#map{height:calc(100% - 76px);background:#dce8f2}
+
+.sidebar{
+    position:absolute;right:22px;top:96px;min-width:224px;
+    background:var(--panel);border:1px solid rgba(255,255,255,.75);border-radius:16px;
+    box-shadow:var(--shadow);padding:15px 16px;z-index:1200;
+    font-size:13px;backdrop-filter:blur(14px)
+}
+.sidebar h3{margin:0 0 12px;color:var(--navy);font-size:12px;text-transform:uppercase;letter-spacing:.12em}
+.legend-item{margin:10px 0;display:flex;align-items:center;gap:9px;color:#33465c}
+.legend-item > span:not(.legend-label){
+    width:20px;height:20px;display:inline-flex;align-items:center;
+    justify-content:center;border-radius:50%;flex:none
+}
+.legend-school{
+    background:linear-gradient(145deg,#102b4e,#2a78b9);color:white;font-size:10px;
+    box-shadow:0 0 0 3px white,0 3px 8px rgba(15,39,69,.25)
+}
+.legend-bairro{
+    width:19px!important;height:19px!important;border-radius:6px!important;flex:none;
+    background:linear-gradient(135deg,rgba(66,145,202,.18),rgba(66,145,202,.04));
+    border:2px solid #3984bc;box-shadow:inset 0 0 0 2px rgba(255,255,255,.35)
+}
+
+.dashboard{
+    position:absolute;left:80px;top:96px;width:58px;min-width:58px;
+    background:var(--panel);border:1px solid rgba(255,255,255,.8);border-radius:16px;
+    box-shadow:var(--shadow);z-index:1100;overflow:hidden;backdrop-filter:blur(14px);
+    transition:.25s
+}
+.dashboard.expanded{width:275px;min-width:275px}
+.dashboard-header{
+    height:58px;display:flex;align-items:center;justify-content:center;
+    cursor:pointer;background:#fff
+}
+.dashboard.expanded .dashboard-header{
+    height:auto;padding:13px 15px;justify-content:space-between;
+    border-bottom:1px solid #e8edf3;background:#f8fafc
+}
+.dashboard-title{display:flex;align-items:center;gap:9px;color:#063b78;font-weight:700}
+.dashboard-title .emoji{font-size:22px}
+.dashboard-title .text{display:none}
+.dashboard.expanded .dashboard-title .text{display:block;font-size:14px}
+.toggle{border:0;background:transparent;font-size:18px;color:#64748b;cursor:pointer;display:none}
+.dashboard.expanded .toggle{display:block}
+.dashboard-content{display:none;padding:14px}
+.dashboard.expanded .dashboard-content{display:block}
+.stat{
+    background:#f5f8fb;border-radius:10px;padding:15px;text-align:center;
+    border:1px solid #e7edf4
+}
+.stat-value{font-size:28px;font-weight:800;color:#063b78}
+.stat-label{font-size:11px;color:#64748b;text-transform:uppercase;margin-top:3px}
+.region-list{margin-top:12px}
+.region{
+    display:flex;justify-content:space-between;padding:7px 4px;
+    border-bottom:1px solid #edf1f5;font-size:12px
+}
+.region:last-child{border-bottom:0}
+.dashboard-footer{
+    display:none;font-size:10px;color:#7b8794;text-align:center;
+    padding:7px;background:#f8fafc
+}
+.dashboard.expanded .dashboard-footer{display:block}
+
+#basemapControl{position:absolute;bottom:25px;left:20px;z-index:1500}
+#basemapBtn{
+    background:linear-gradient(145deg,var(--navy),var(--blue));color:#fff;border:0;border-radius:15px;
+    width:50px;height:50px;font-size:18px;cursor:pointer;
+    box-shadow:0 10px 20px rgba(15,39,69,.28);transition:.2s
+}
+#basemapOptions{
+    display:none;margin-top:10px;background:var(--panel);padding:13px;
+    border:1px solid rgba(255,255,255,.8);border-radius:14px;box-shadow:var(--shadow);
+    width:225px;font-size:13px;backdrop-filter:blur(12px)
+}
+#basemapOptions label{display:block;padding:7px 2px;cursor:pointer;color:#33465c}
+#basemapOptions input,.sidebar input{accent-color:var(--blue)}
+#basemapOptions label:hover{color:var(--blue);background:#f1f7fc;border-radius:7px}
+
+.school-icon{
+    width:var(--school-size,34px);
+    height:var(--school-size,34px);
+    border-radius:11px;
+    background:linear-gradient(145deg,#102b4e,#2a78b9);
+    border:calc(var(--school-size,34px) * .075) solid white;
+    box-shadow:0 4px 10px rgba(15,39,69,.34);
+    display:flex;align-items:center;justify-content:center;
+    color:white;line-height:1;position:relative;
+    transform:rotate(0deg);
+    transition:width .18s,height .18s,transform .18s
+}
+.school-glyph{width:62%;height:62%;display:block;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.legend-school .school-glyph{width:14px;height:14px}
+.school-icon:after{
+    content:"";position:absolute;
+    inset:calc(var(--school-size,34px) * -.13);
+    border-radius:50%;
+    border:1px solid rgba(42,120,185,.4)
+}
+.school-icon.search-highlight{
+    animation:schoolPulse 1s ease-in-out infinite
+}
+
+@keyframes schoolPulse{
+    0%,100%{transform:scale(1);box-shadow:0 3px 9px rgba(0,0,0,.35),0 0 0 0 rgba(20,130,210,.55)}
+    50%{transform:scale(1.22);box-shadow:0 3px 12px rgba(0,0,0,.35),0 0 0 13px rgba(20,130,210,0)}
+}
+
+.leaflet-popup-content-wrapper{
+    padding:0;overflow:hidden;border:1px solid rgba(35,105,167,.35);
+    border-radius:16px;background:linear-gradient(155deg,#ffffff 0%,#f3f8fd 100%);
+    box-shadow:0 18px 42px rgba(16,43,78,.25)
+}
+.leaflet-popup-tip{background:#f3f8fd}
+.leaflet-popup-content{margin:0;min-width:280px}
+.popup-title{
+    position:relative;margin:0;padding:15px 16px 14px;color:#fff;
+    background:linear-gradient(135deg,#102b4e 0%,#2369a7 100%);
+    font-size:15px;font-weight:800;letter-spacing:.01em;
+    border-bottom:3px solid #60b6e8
+}
+.popup-title-mark{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;margin-right:5px;border:1px solid rgba(255,255,255,.55);border-radius:6px;font-size:15px;vertical-align:-3px}
+.popup-title:after{
+    content:"";position:absolute;right:15px;top:14px;width:34px;height:18px;
+    border-top:1px solid rgba(255,255,255,.55);border-bottom:1px solid rgba(255,255,255,.3);
+    transform:skewX(-28deg);opacity:.7
+}
+.popup-table{width:calc(100% - 28px);margin:11px 14px 0;border-collapse:collapse;font-size:12px}
+.popup-table td{padding:7px 4px;vertical-align:top;border-bottom:1px solid rgba(148,163,184,.22)}
+.popup-table tr:last-child td{border-bottom:0}
+.popup-table td:first-child{font-weight:800;color:#48627d;width:82px;text-transform:uppercase;font-size:10px;letter-spacing:.05em}
+.maps-btn{
+    display:block;margin:13px 14px 15px;text-align:center;text-decoration:none;
+    background:linear-gradient(135deg,#102b4e,#2369a7);color:#fff!important;padding:11px 9px;
+    border-radius:9px;font-weight:800;letter-spacing:.01em;box-shadow:0 6px 14px rgba(23,77,130,.28);
+    border:1px solid rgba(96,182,232,.45);transition:.2s ease
+}
+.maps-btn:hover{background:linear-gradient(135deg,#174d82,#2a78b9);color:#fff!important;box-shadow:0 8px 18px rgba(23,77,130,.36);transform:translateY(-1px)}
+.coords{font-family:Consolas,monospace;font-size:11px;color:#475569}
+.legend-label{white-space:nowrap;flex:1;min-width:0}
+.bairro-label{
+    --bairro-label-size:12px;
+    pointer-events:none;
+    background:rgba(255,255,255,.70);
+    border:1px solid #0000CD;
+    border-radius:999px;
+    color:#0000FF;
+    font-size:var(--bairro-label-size);
+    font-weight:700;
+    letter-spacing:.015em;
+    line-height:1;
+    padding:4px 8px;
+    box-shadow:0 0 0 1px rgba(0,229,255,.2),0 0 12px rgba(0,207,255,.5),0 4px 12px rgba(5,24,44,.22);
+    white-space:nowrap;
+    transition:font-size .2s ease,opacity .2s ease,padding .2s ease
+}
+.bairro-label:before{border-top-color:rgba(255,255,255,.90)}
+.bairro-neon{filter:drop-shadow(0 0 3px rgba(0,229,255,.95)) drop-shadow(0 0 7px rgba(0,127,255,.6))}
+.search-message{
+    position:absolute;left:50%;top:84px;transform:translateX(-50%);
+    background:#063b78;color:white;padding:9px 15px;border-radius:8px;
+    box-shadow:0 4px 12px rgba(0,0,0,.25);z-index:1700;display:none;
+    font-size:12px
+}
+.search-message.show{display:block;animation:fadeMessage 3s forwards}
+@keyframes fadeMessage{
+    0%{opacity:0;transform:translate(-50%,-8px)}
+    10%,80%{opacity:1;transform:translate(-50%,0)}
+    100%{opacity:0;transform:translate(-50%,-8px)}
+}
+.leaflet-popup-content{margin:12px 14px}
+.leaflet-control-layers{display:none}
+@media(max-width:700px){
+    #header{height:auto;min-height:68px;padding:8px 10px;gap:7px}
+    .brand h1{font-size:14px}.brand small{font-size:9px}
+    .brand-icon{width:36px;height:36px;font-size:19px}
+    #top-actions{flex:1}.search-wrap{flex:1}
+    #buscaUnidade{width:100%}#btnBuscar{padding:10px}
+    #map{height:calc(100% - 76px)}
+    .sidebar{right:8px;top:76px;min-width:175px}
+    .dashboard{left:55px;top:76px}
+    .dashboard.expanded{width:245px;min-width:245px}
+}
+</style>
+</head>
+
+<body>
+
+<div id="header">
+    <div class="brand">
+        <div class="brand-icon"><svg class="brand-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11M2.5 20h19M8 20v-5h8v5M8 10h.01M12 10h.01M16 10h.01M8 12.5h.01M12 12.5h.01M16 12.5h.01"/></svg></div>
+        <div>
+            <h1>SME-CUIABÁ</h1>
+            <small>Secretaria Municipal de Educação de Cuiabá</small>
+        </div>
+    </div>
+
+    <div id="top-actions">
+        <div class="search-wrap">
+            <input type="text" id="buscaUnidade"
+                   placeholder="Buscar unidade de ensino..."
+                   list="listaUnidades"
+                   autocomplete="off">
+            <span class="search-icon">⌕</span>
+            <datalist id="listaUnidades"></datalist>
+        </div>
+        <button id="btnBuscar" onclick="buscarUnidade()">Buscar</button>
+    </div>
+</div>
+
+<div id="map"></div>
+
+<div id="searchMessage" class="search-message"></div>
+
+<!-- PAINEL RESUMO -->
+<div class="dashboard" id="dashboard">
+    <div class="dashboard-header" onclick="toggleDashboard()">
+        <div class="dashboard-title">
+            <span class="emoji">⌂</span>
+            <span class="text">Unidades de Ensino</span>
+        </div>
+        <button class="toggle" onclick="event.stopPropagation();toggleDashboard()">×</button>
+    </div>
+    <div class="dashboard-content">
+        <div class="stat">
+            <div class="stat-value" id="total-unidades">0</div>
+            <div class="stat-label">Unidades cadastradas</div>
+        </div>
+        <div class="region-list" id="region-list"></div>
+    </div>
+    <div class="dashboard-footer">Clique no ícone ⌂ para expandir</div>
+</div>
+
+<!-- LEGENDA: SOMENTE AS DUAS CAMADAS -->
+<div class="sidebar">
+    <h3>Camadas</h3>
+
+    <div class="legend-item">
+        <input type="checkbox" checked onchange="toggleLayer(unidadesLayer,this)">
+        <span class="legend-school"><svg class="school-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11M2.5 20h19M8 20v-5h8v5M8 10h.01M12 10h.01M16 10h.01M8 12.5h.01M12 12.5h.01M16 12.5h.01"/></svg></span>
+        <b class="legend-label">Unidade de Ensino</b>
+    </div>
+
+    <div class="legend-item">
+        <input type="checkbox" checked onchange="toggleLayer(bairrosLayer,this)">
+        <span class="legend-bairro"></span>
+        <span class="legend-label">Limite de Bairro</span>
+    </div>
+</div>
+
+<!-- MAPAS BASE -->
+<div id="basemapControl">
+    <button id="basemapBtn" onclick="toggleBasemap()">🌐</button>
+    <div id="basemapOptions">
+        <label><input type="radio" name="bm" onclick="setBasemap('gsat')" checked> Google Satélite</label>
+        <label><input type="radio" name="bm" onclick="setBasemap('gmap')"> Google Maps</label>
+        <label><input type="radio" name="bm" onclick="setBasemap('ghib')"> Google Híbrido</label>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// CONFIGURAÇÃO
+// ============================================================
+const URL_UNIDADES =
+    "https://raw.githubusercontent.com/gilmaracacio/SME/main/UnidadesEnsino.geojson";
+
+const URL_BAIRROS =
+    "https://raw.githubusercontent.com/gilmaracacio/SME/main/Bairros.geojson";
+
+const map = L.map("map", {
+    zoomControl:true,
+    preferCanvas:true
+}).setView([-15.609801,-56.053180],12);
+
+// ============================================================
+// BASEMAPS
+// ============================================================
+const gmap = L.tileLayer(
+    "https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}",
+    {maxZoom:20,subdomains:["mt0","mt1","mt2","mt3"]}
+);
+
+const gsat = L.tileLayer(
+    "https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
+    {maxZoom:20,subdomains:["mt0","mt1","mt2","mt3"]}
+);
+
+const ghib = L.tileLayer(
+    "https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}",
+    {maxZoom:20,subdomains:["mt0","mt1","mt2","mt3"]}
+);
+
+let currentBase = gsat.addTo(map);
+
+function setBasemap(type){
+    map.removeLayer(currentBase);
+    if(type==="gmap") currentBase=gmap;
+    if(type==="gsat") currentBase=gsat;
+    if(type==="ghib") currentBase=ghib;
+    map.addLayer(currentBase);
+}
+
+function toggleBasemap(){
+    const box=document.getElementById("basemapOptions");
+    box.style.display=box.style.display==="block"?"none":"block";
+}
+
+// ============================================================
+// MEDIÇÃO
+// ============================================================
+const drawnItems = new L.FeatureGroup().addTo(map);
+
+const drawControl = new L.Control.Draw({
+    edit:{featureGroup:drawnItems},
+    draw:{
+        polygon:true,
+        polyline:true,
+        rectangle:false,
+        circle:false,
+        marker:false,
+        circlemarker:false
+    }
+});
+
+map.addControl(drawControl);
+
+map.on(L.Draw.Event.CREATED,function(e){
+    const layer=e.layer;
+    drawnItems.addLayer(layer);
+
+    if(e.layerType==="polyline"){
+        const latlngs=layer.getLatLngs();
+        let d=0;
+        for(let i=0;i<latlngs.length-1;i++){
+            d+=latlngs[i].distanceTo(latlngs[i+1]);
+        }
+        layer.bindPopup("<b>Distância:</b> "+d.toFixed(2)+" m").openPopup();
+    }
+
+    if(e.layerType==="polygon"){
+        const a=L.GeometryUtil.geodesicArea(layer.getLatLngs()[0]);
+        layer.bindPopup("<b>Área:</b> "+a.toFixed(2)+" m²").openPopup();
+    }
+});
+
+// ============================================================
+// CAMADAS
+// ============================================================
+let unidadesLayer = L.layerGroup().addTo(map);
+let bairrosLayer = null;
+
+let unidadesFeatures = [];
+let unidadeMarkers = [];
+let unidadeSelecionada = null;
+let camadaDestaqueTemp = null;
+let listaUnidades = new Set();
+let regioes = {};
+
+// ============================================================
+// ÍCONE SOFISTICADO DAS UNIDADES
+// ============================================================
+function tamanhoIcone(){
+    // Ícones discretos na abertura e maiores conforme o usuário aproxima.
+    // z12 ≈ 18 px; z15 ≈ 26 px; z18+ ≈ 35 px.
+    const z = map.getZoom();
+    return Math.max(14, Math.min(42, 12 + (z - 10) * 2.8));
+}
+
+function criarIconeUnidade(destaque=false){
+    const s = tamanhoIcone();
+    return L.divIcon({
+        className:"",
+        html:`<div class="school-icon ${destaque ? "search-highlight" : ""}"
+                    style="--school-size:${s}px"><svg class="school-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11M2.5 20h19M8 20v-5h8v5M8 10h.01M12 10h.01M16 10h.01M8 12.5h.01M12 12.5h.01M16 12.5h.01"/></svg></div>`,
+        iconSize:[s,s],
+        iconAnchor:[s/2,s/2],
+        popupAnchor:[0,-s/2]
+    });
+}
+
+function atualizarTamanhoIcones(){
+    unidadeMarkers.forEach(marker=>{
+        const selecionado = (marker === unidadeSelecionada);
+        marker.setIcon(criarIconeUnidade(selecionado));
+    });
+}
+
+map.on("zoomend", atualizarTamanhoIcones);
+
+function atualizarEtiquetasBairros(){
+    if(!bairrosLayer) return;
+
+    const zoom=map.getZoom();
+    // O mapa abre no zoom 12: as etiquetas aparecem após cerca de 4 níveis de aproximação.
+    const zoomMinimoBairros=16;
+    const exibir=zoom>=zoomMinimoBairros;
+    const tamanho=Math.max(10,Math.min(17,10+(zoom-zoomMinimoBairros)*1.25));
+
+    // Ao mostrar os nomes, remove o preenchimento para deixar apenas as bordas.
+    bairrosLayer.setStyle({fillOpacity:exibir ? 0 : .10});
+
+    bairrosLayer.eachLayer(layer=>{
+        const tooltip=layer.getTooltip && layer.getTooltip();
+        const elemento=tooltip && tooltip.getElement();
+        if(!elemento) return;
+        elemento.style.setProperty("--bairro-label-size", `${tamanho}px`);
+        elemento.style.display=exibir ? "block" : "none";
+        elemento.style.opacity=exibir ? String(Math.min(1,.78+(zoom-zoomMinimoBairros)*.07)) : "0";
+    });
+}
+
+map.on("zoomend", atualizarEtiquetasBairros);
+
+function regionalBruto(valor){
+    return valor || "-";
+}
+
+function formatarNome(valor){
+    return String(valor)
+        .toLocaleLowerCase("pt-BR")
+        .replace(/(^|[\s-])([a-zà-ÿ])/gi, (_, separador, letra) => separador + letra.toLocaleUpperCase("pt-BR"));
+}
+
+// ============================================================
+// POPUP DA UNIDADE
+// ============================================================
+function popupUnidade(p){
+
+    const nome = p.UNIDADE_1 || "-";
+    const regional = formatarNome(regionalBruto(p.REGIONAL_1));
+    const bairro = formatarNome(p.NOMES_BAIRROS || "-");
+    const endereco = p.ENDERECO_1 || "-";
+
+    // O GeoJSON atual possui X_1/Y_1.
+    // X1/Y1 também são aceitos caso os campos sejam renomeados no futuro.
+    const longitude = p.X_1 ?? p.X1 ?? "-";
+    const latitude  = p.Y_1 ?? p.Y1 ?? "-";
+
+    const linkMaps = p.LINK || "";
+
+    return `
+        <div class="popup-title"><span class="popup-title-mark">⌂</span> ${escapeHTML(nome)}</div>
+
+        <table class="popup-table">
+            <tr>
+                <td>Regional</td>
+                <td>${escapeHTML(regional)}</td>
+            </tr>
+            <tr>
+                <td>Nome</td>
+                <td><b>${escapeHTML(nome)}</b></td>
+            </tr>
+            <tr>
+                <td>Bairro</td>
+                <td>${escapeHTML(bairro)}</td>
+            </tr>
+            <tr>
+                <td>Endereço</td>
+                <td>${escapeHTML(endereco)}</td>
+            </tr>
+            <tr>
+                <td>Long.</td>
+                <td class="coords">${longitude}</td>
+            </tr>
+            <tr>
+                <td>Latitude</td>
+                <td class="coords">${latitude}</td>
+            </tr>
+        </table>
+
+        ${
+            linkMaps
+            ? `<a class="maps-btn" href="${escapeAttribute(linkMaps)}" target="_blank" rel="noopener noreferrer">
+                 📍 Abrir no Google Maps
+               </a>`
+            : ""
+        }
+    `;
+}
+
+function escapeHTML(value){
+    return String(value)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+}
+
+function escapeAttribute(value){
+    return String(value).replaceAll('"',"&quot;");
+}
+
+// ============================================================
+// CARREGAR UNIDADES
+// ============================================================
+fetch(URL_UNIDADES)
+.then(response=>{
+    if(!response.ok) throw new Error("Erro HTTP "+response.status);
+    return response.json();
+})
+.then(data=>{
+
+    unidadesFeatures=data.features || [];
+
+    const grupoRegioes={};
+
+    data.features.forEach(feature=>{
+
+        const p=feature.properties || {};
+        const nome=p.UNIDADE_1;
+
+        if(nome){
+            listaUnidades.add(nome);
+        }
+
+        const regional=p.REGIONAL_1 || "Sem regional";
+        grupoRegioes[regional]=(grupoRegioes[regional] || 0)+1;
+
+        const coords=feature.geometry.coordinates;
+
+        // GeoJSON: [longitude, latitude]
+        const latlng=L.latLng(coords[1],coords[0]);
+
+        const marker=L.marker(latlng,{
+            icon:criarIconeUnidade(false),
+            keyboard:true,
+            title:nome || "Unidade de Ensino",
+            alt:nome || "Unidade de Ensino",
+            riseOnHover:true
+        });
+
+        marker.feature=feature;
+        marker.unidadeNome=nome || "";
+
+        marker.bindPopup(popupUnidade(p),{
+            maxWidth:360,
+            minWidth:280,
+            autoPan:true
+        });
+
+        marker.on("click",function(){
+            unidadeSelecionada=marker;
+            removerDestaqueTodos();
+            marker.setIcon(criarIconeUnidade(true));
+            marker.openPopup();
+        });
+
+        unidadesLayer.addLayer(marker);
+        unidadeMarkers.push(marker);
+    });
+
+    regioes=grupoRegioes;
+
+    document.getElementById("total-unidades").textContent=data.features.length;
+    montarResumoRegioes();
+    popularListaUnidades();
+
+})
+.catch(error=>{
+    console.error(error);
+    mostrarMensagem("Não foi possível carregar as unidades de ensino.");
+});
+
+// ============================================================
+// CARREGAR BAIRROS
+// ============================================================
+fetch(URL_BAIRROS)
+.then(response=>{
+    if(!response.ok) throw new Error("Erro HTTP "+response.status);
+    return response.json();
+})
+.then(data=>{
+
+    bairrosLayer=L.geoJSON(data,{
+        style:{
+            color:"#00e5ff",
+            weight:2.5,
+            opacity:1,
+            dashArray:"9 6",
+            lineCap:"round",
+            lineJoin:"round",
+            className:"bairro-neon",
+            fillColor:"#006dff",
+            fillOpacity:.10
+        },
+
+        onEachFeature:(feature,layer)=>{
+
+            const p=feature.properties || {};
+
+            const nome=p.NOMES_BAIRROS || p.NOMES_BAIR || "-";
+            const controle=p.CONTROLE_1 || "-";
+
+            layer.nomeBairro=nome;
+            layer.bindTooltip(formatarNome(nome),{
+                permanent:true,
+                direction:"center",
+                className:"bairro-label",
+                opacity:.92,
+                interactive:false
+            });
+
+            layer.bindPopup(`
+                <div class="popup-title">📍 Bairro</div>
+                <table class="popup-table">
+                    <tr>
+                        <td>Nome</td>
+                        <td><b>${escapeHTML(nome)}</b></td>
+                    </tr>
+                    <tr>
+                        <td>Região</td>
+                        <td>${escapeHTML(controle)}</td>
+                    </tr>
+                </table>
+            `);
+        }
+    });
+
+    // A camada e os nomes dos bairros iniciam ativos.
+    bairrosLayer.addTo(map);
+    atualizarEtiquetasBairros();
+})
+.catch(error=>{
+    console.error(error);
+    mostrarMensagem("Não foi possível carregar os limites de bairros.");
+});
+
+// ============================================================
+// LISTA / AUTOCOMPLETE
+// ============================================================
+function popularListaUnidades(){
+
+    const lista=document.getElementById("listaUnidades");
+    lista.innerHTML="";
+
+    Array.from(listaUnidades)
+        .sort((a,b)=>a.localeCompare(b,"pt-BR"))
+        .forEach(nome=>{
+            const option=document.createElement("option");
+            option.value=nome;
+            lista.appendChild(option);
+        });
+}
+
+// ============================================================
+// BUSCA DE UNIDADE
+// ============================================================
+function buscarUnidade(){
+
+    const campo=document.getElementById("buscaUnidade");
+    const termo=campo.value.trim();
+
+    if(!termo){
+        mostrarMensagem("Digite o nome de uma unidade de ensino.");
+        campo.focus();
+        return;
+    }
+
+    const termoNormalizado=normalizar(termo);
+
+    let encontrada=unidadeMarkers.find(marker=>{
+        return normalizar(marker.unidadeNome)===termoNormalizado;
+    });
+
+    // Busca parcial caso não exista correspondência exata.
+    if(!encontrada){
+        encontrada=unidadeMarkers.find(marker=>{
+            return normalizar(marker.unidadeNome).includes(termoNormalizado);
+        });
+    }
+
+    if(!encontrada){
+
+        mostrarMensagem("Unidade não encontrada: "+termo);
+
+        // Sugere primeira correspondência aproximada.
+        const aproximada=unidadeMarkers.find(marker=>{
+            const nome=normalizar(marker.unidadeNome);
+            return termoNormalizado.split(" ").some(p=>p.length>3 && nome.includes(p));
+        });
+
+        if(aproximada){
+            mostrarMensagem("Nenhuma correspondência exata. Use: "+aproximada.unidadeNome);
+        }
+
+        return;
+    }
+
+    destacarUnidade(encontrada);
+}
+
+function normalizar(texto){
+    return String(texto)
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g,"")
+        .toUpperCase()
+        .trim();
+}
+
+// Enter também executa a busca.
+document.getElementById("buscaUnidade").addEventListener("keydown",function(e){
+    if(e.key==="Enter"){
+        buscarUnidade();
+    }
+});
+
+// ============================================================
+// DESTAQUE / ALERTA DA UNIDADE
+// ============================================================
+function destacarUnidade(marker){
+
+    removerDestaqueTodos();
+
+    unidadeSelecionada=marker;
+
+    marker.setIcon(criarIconeUnidade(true));
+
+    const latlng=marker.getLatLng();
+
+    map.flyTo(latlng,17,{
+        animate:true,
+        duration:1.4
+    });
+
+    setTimeout(()=>{
+        marker.openPopup();
+    },900);
+
+    mostrarMensagem("Unidade localizada: "+marker.unidadeNome);
+
+    // Retira a animação depois de alguns segundos,
+    // mas mantém a unidade selecionada.
+    setTimeout(()=>{
+        if(unidadeSelecionada===marker){
+            marker.setIcon(criarIconeUnidade(false));
+        }
+    },7000);
+}
+
+function removerDestaqueTodos(){
+
+    unidadeMarkers.forEach(marker=>{
+        marker.setIcon(criarIconeUnidade(false));
+    });
+}
+
+// ============================================================
+// CLIQUE FORA
+// ============================================================
+map.on("click",function(){
+    removerDestaqueTodos();
+    unidadeSelecionada=null;
+});
+
+// ============================================================
+// TOGGLE DAS CAMADAS
+// ============================================================
+function toggleLayer(layer,checkbox){
+
+    if(!layer){
+
+        checkbox.checked=false;
+        mostrarMensagem("A camada ainda está carregando.");
+        return;
+    }
+
+    if(checkbox.checked){
+        map.addLayer(layer);
+    }else{
+        map.removeLayer(layer);
+    }
+}
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+function toggleDashboard(){
+    document.getElementById("dashboard").classList.toggle("expanded");
+}
+
+function montarResumoRegioes(){
+
+    const container=document.getElementById("region-list");
+    container.innerHTML="";
+
+    Object.keys(regioes)
+        .sort((a,b)=>a.localeCompare(b,"pt-BR"))
+        .forEach(regional=>{
+
+            const div=document.createElement("div");
+            div.className="region";
+
+            div.innerHTML=`
+                <span>${escapeHTML(regional)}</span>
+                <b>${regioes[regional]}</b>
+            `;
+
+            container.appendChild(div);
+        });
+}
+
+// ============================================================
+// MENSAGEM DE ALERTA
+// ============================================================
+let timerMensagem=null;
+
+function mostrarMensagem(texto){
+
+    const el=document.getElementById("searchMessage");
+
+    el.classList.remove("show");
+
+    // Reinicia animação CSS
+    void el.offsetWidth;
+
+    el.textContent=texto;
+    el.classList.add("show");
+
+    clearTimeout(timerMensagem);
+
+    timerMensagem=setTimeout(()=>{
+        el.classList.remove("show");
+    },3200);
+}
+</script>
+
+</body>
+</html>
