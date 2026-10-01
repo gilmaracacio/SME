@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SME-CUIABÁ | Unidades de Ensino</title>
+<title>GEOPORTAL SME-CUIABÁ | Unidades de Ensino</title>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css"/>
@@ -15,76 +15,78 @@
 <style>
 *{box-sizing:border-box}
 :root{
-    --navy:#102b4e;
-    --blue:#2369a7;
-    --blue-deep:#174d82;
-    --sky:#eaf3fb;
-    --ink:#213247;
-    --muted:#6b7b8f;
-    --line:rgba(148,163,184,.28);
-    --panel:rgba(255,255,255,.94);
-    --shadow:0 14px 34px rgba(15,39,69,.16),0 3px 10px rgba(15,39,69,.08);
+    --navy:#154b35;
+    --green:#207c4d;
+    --blue:#2378aa;
+    --blue-deep:#175d86;
+    --gold:#d7ad37;
+    --sky:#eef7f0;
+    --ink:#24372d;
+    --muted:#687b70;
+    --line:rgba(83,117,96,.24);
+    --panel:rgba(255,255,255,.96);
+    --shadow:0 14px 34px rgba(21,75,53,.16),0 3px 10px rgba(21,75,53,.08);
 }
 *{scrollbar-width:thin;scrollbar-color:#b8c9da transparent}
-html,body{margin:0;padding:0;height:100%;font-family:"Segoe UI",Inter,Arial,sans-serif;color:var(--ink);background:#e7eef5}
+html,body{margin:0;padding:0;height:100%;font-family:"Segoe UI",Inter,Arial,sans-serif;color:var(--ink);background:#e9f1eb}
 #header{
-    height:76px;background:linear-gradient(110deg,#ffffff 0%,#f7fbff 60%,#edf5fc 100%);
+    height:80px;background:linear-gradient(110deg,#103e2b 0%,#15583b 62%,#207c4d 100%);
     display:flex;align-items:center;justify-content:space-between;padding:0 26px;
-    border-bottom:1px solid rgba(148,163,184,.3);box-shadow:0 5px 20px rgba(15,39,69,.12);
+    border-bottom:4px solid var(--gold);box-shadow:0 5px 20px rgba(21,75,53,.24);
     position:relative;z-index:1600
 }
 .brand{display:flex;align-items:center;gap:12px;min-width:280px}
 .brand-icon{
     width:44px;height:44px;border-radius:14px;
-    background:linear-gradient(145deg,#102b4e,#2a78b9);
+    background:rgba(255,255,255,.13);
     display:flex;align-items:center;justify-content:center;
-    color:white;font-size:22px;box-shadow:0 8px 18px rgba(16,72,119,.25);
-    border:1px solid rgba(255,255,255,.5)
+    color:white;font-size:22px;box-shadow:0 8px 18px rgba(0,0,0,.14);
+    border:1px solid rgba(255,255,255,.38)
 }
 .brand-glyph{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-.brand h1{margin:0;color:var(--navy);font-size:18px;letter-spacing:.02em;font-weight:800}
-.brand small{display:block;color:var(--muted);font-size:12px;margin-top:3px;letter-spacing:.01em}
+.brand h1{margin:0;color:#fff;font-size:18px;letter-spacing:.045em;font-weight:800}
+.brand small{display:block;color:rgba(255,255,255,.78);font-size:11px;margin-top:3px;letter-spacing:.02em}
 #top-actions{display:flex;align-items:center;gap:7px}
 .search-wrap{position:relative}
 #buscaUnidade{
-    width:360px;padding:11px 42px 11px 15px;border:1px solid #c7d5e3;
-    border-radius:11px;outline:none;font-size:13px;background:rgba(255,255,255,.9);
-    color:var(--ink);box-shadow:0 3px 10px rgba(15,39,69,.05);transition:.2s
+    width:360px;padding:11px 42px 11px 15px;border:1px solid rgba(255,255,255,.55);
+    border-radius:4px;outline:none;font-size:13px;background:rgba(255,255,255,.96);
+    color:var(--ink);box-shadow:0 3px 10px rgba(0,0,0,.12);transition:.2s
 }
 #buscaUnidade:focus{border-color:#1677c8;box-shadow:0 0 0 3px rgba(22,119,200,.12)}
 .search-icon{position:absolute;right:12px;top:9px;color:#64748b;font-size:18px}
 #btnBuscar{
-    border:0;background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;padding:11px 18px;
-    border-radius:11px;cursor:pointer;font-weight:700;box-shadow:0 7px 15px rgba(23,77,130,.2);transition:.2s
+    border:1px solid rgba(255,255,255,.35);background:linear-gradient(135deg,#d0a52c,#edc85c);color:#173b29;padding:11px 18px;
+    border-radius:4px;cursor:pointer;font-weight:800;box-shadow:0 7px 15px rgba(0,0,0,.14);transition:.2s
 }
-#btnBuscar:hover{transform:translateY(-1px);box-shadow:0 9px 18px rgba(23,77,130,.3)}
-#map{height:calc(100% - 76px);background:#dce8f2}
+#btnBuscar:hover{background:linear-gradient(135deg,#e0b63a,#f5d878);transform:translateY(-1px)}
+#map{height:calc(100% - 80px);background:#dce8e0}
 
 .sidebar{
-    position:absolute;right:22px;top:96px;min-width:224px;
-    background:var(--panel);border:1px solid rgba(255,255,255,.75);border-radius:16px;
+    position:absolute;right:22px;top:100px;min-width:224px;
+    background:var(--panel);border:1px solid rgba(255,255,255,.82);border-radius:7px;
     box-shadow:var(--shadow);padding:15px 16px;z-index:1200;
     font-size:13px;backdrop-filter:blur(14px)
 }
-.sidebar h3{margin:0 0 12px;color:var(--navy);font-size:12px;text-transform:uppercase;letter-spacing:.12em}
+.sidebar h3{margin:0 0 12px;color:var(--navy);font-size:12px;text-transform:uppercase;letter-spacing:.12em;border-bottom:2px solid var(--gold);padding-bottom:9px}
 .legend-item{margin:10px 0;display:flex;align-items:center;gap:9px;color:#33465c}
 .legend-item > span:not(.legend-label){
     width:20px;height:20px;display:inline-flex;align-items:center;
     justify-content:center;border-radius:50%;flex:none
 }
 .legend-school{
-    background:linear-gradient(145deg,#102b4e,#2a78b9);color:white;font-size:10px;
+    background:linear-gradient(145deg,#15583b,#2a9a60);color:white;font-size:10px;
     box-shadow:0 0 0 3px white,0 3px 8px rgba(15,39,69,.25)
 }
 .legend-bairro{
     width:19px!important;height:19px!important;border-radius:6px!important;flex:none;
-    background:linear-gradient(135deg,rgba(66,145,202,.18),rgba(66,145,202,.04));
-    border:2px solid #3984bc;box-shadow:inset 0 0 0 2px rgba(255,255,255,.35)
+    background:linear-gradient(135deg,rgba(32,124,77,.18),rgba(32,124,77,.04));
+    border:2px solid #2a9a60;box-shadow:inset 0 0 0 2px rgba(255,255,255,.35)
 }
 
 .dashboard{
-    position:absolute;left:80px;top:96px;width:58px;min-width:58px;
-    background:var(--panel);border:1px solid rgba(255,255,255,.8);border-radius:16px;
+    position:absolute;left:80px;top:100px;width:58px;min-width:58px;
+    background:var(--panel);border:1px solid rgba(255,255,255,.84);border-radius:7px;
     box-shadow:var(--shadow);z-index:1100;overflow:hidden;backdrop-filter:blur(14px);
     transition:.25s
 }
@@ -109,9 +111,10 @@ html,body{margin:0;padding:0;height:100%;font-family:"Segoe UI",Inter,Arial,sans
     background:#f5f8fb;border-radius:10px;padding:15px;text-align:center;
     border:1px solid #e7edf4
 }
-.stat-value{font-size:28px;font-weight:800;color:#063b78}
+.stat-value{font-size:28px;font-weight:800;color:var(--navy)}
 .stat-label{font-size:11px;color:#64748b;text-transform:uppercase;margin-top:3px}
-.region-list{margin-top:12px}
+.summary-heading{margin:14px 0 5px;color:var(--navy);font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+.region-list{margin-top:4px;max-height:240px;overflow-y:auto;overflow-x:hidden}
 .region{
     display:flex;justify-content:space-between;padding:7px 4px;
     border-bottom:1px solid #edf1f5;font-size:12px
@@ -125,13 +128,13 @@ html,body{margin:0;padding:0;height:100%;font-family:"Segoe UI",Inter,Arial,sans
 
 #basemapControl{position:absolute;bottom:25px;left:20px;z-index:1500}
 #basemapBtn{
-    background:linear-gradient(145deg,var(--navy),var(--blue));color:#fff;border:0;border-radius:15px;
+    background:linear-gradient(145deg,#15583b,#207c4d);color:#fff;border:0;border-radius:5px;
     width:50px;height:50px;font-size:18px;cursor:pointer;
     box-shadow:0 10px 20px rgba(15,39,69,.28);transition:.2s
 }
 #basemapOptions{
     display:none;margin-top:10px;background:var(--panel);padding:13px;
-    border:1px solid rgba(255,255,255,.8);border-radius:14px;box-shadow:var(--shadow);
+    border:1px solid rgba(255,255,255,.8);border-radius:7px;box-shadow:var(--shadow);
     width:225px;font-size:13px;backdrop-filter:blur(12px)
 }
 #basemapOptions label{display:block;padding:7px 2px;cursor:pointer;color:#33465c}
@@ -141,8 +144,8 @@ html,body{margin:0;padding:0;height:100%;font-family:"Segoe UI",Inter,Arial,sans
 .school-icon{
     width:var(--school-size,34px);
     height:var(--school-size,34px);
-    border-radius:11px;
-    background:linear-gradient(145deg,#102b4e,#2a78b9);
+    border-radius:5px;
+    background:linear-gradient(145deg,#15583b,#2a9a60);
     border:calc(var(--school-size,34px) * .075) solid white;
     box-shadow:0 4px 10px rgba(15,39,69,.34);
     display:flex;align-items:center;justify-content:center;
@@ -158,14 +161,6 @@ html,body{margin:0;padding:0;height:100%;font-family:"Segoe UI",Inter,Arial,sans
     border-radius:50%;
     border:1px solid rgba(42,120,185,.4)
 }
-.school-icon.search-highlight{
-    animation:schoolPulse 1s ease-in-out infinite
-}
-
-@keyframes schoolPulse{
-    0%,100%{transform:scale(1);box-shadow:0 3px 9px rgba(0,0,0,.35),0 0 0 0 rgba(20,130,210,.55)}
-    50%{transform:scale(1.22);box-shadow:0 3px 12px rgba(0,0,0,.35),0 0 0 13px rgba(20,130,210,0)}
-}
 
 .leaflet-popup-content-wrapper{
     padding:0;overflow:hidden;border:1px solid rgba(35,105,167,.35);
@@ -176,9 +171,9 @@ html,body{margin:0;padding:0;height:100%;font-family:"Segoe UI",Inter,Arial,sans
 .leaflet-popup-content{margin:0;min-width:280px}
 .popup-title{
     position:relative;margin:0;padding:15px 16px 14px;color:#fff;
-    background:linear-gradient(135deg,#102b4e 0%,#2369a7 100%);
+    background:linear-gradient(135deg,#103e2b 0%,#207c4d 100%);
     font-size:15px;font-weight:800;letter-spacing:.01em;
-    border-bottom:3px solid #60b6e8
+    border-bottom:3px solid var(--gold)
 }
 .popup-title-mark{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;margin-right:5px;border:1px solid rgba(255,255,255,.55);border-radius:6px;font-size:15px;vertical-align:-3px}
 .popup-title:after{
@@ -192,12 +187,28 @@ html,body{margin:0;padding:0;height:100%;font-family:"Segoe UI",Inter,Arial,sans
 .popup-table td:first-child{font-weight:800;color:#48627d;width:82px;text-transform:uppercase;font-size:10px;letter-spacing:.05em}
 .maps-btn{
     display:block;margin:13px 14px 15px;text-align:center;text-decoration:none;
-    background:linear-gradient(135deg,#102b4e,#2369a7);color:#fff!important;padding:11px 9px;
-    border-radius:9px;font-weight:800;letter-spacing:.01em;box-shadow:0 6px 14px rgba(23,77,130,.28);
-    border:1px solid rgba(96,182,232,.45);transition:.2s ease
+    background:linear-gradient(135deg,#15583b,#207c4d);color:#fff!important;padding:11px 9px;
+    border-radius:9px;font-weight:800;letter-spacing:.01em;box-shadow:0 6px 14px rgba(21,75,53,.28);
+    border:1px solid rgba(215,173,55,.55);transition:.2s ease
 }
-.maps-btn:hover{background:linear-gradient(135deg,#174d82,#2a78b9);color:#fff!important;box-shadow:0 8px 18px rgba(23,77,130,.36);transform:translateY(-1px)}
+.maps-btn:hover{background:linear-gradient(135deg,#207c4d,#2a9a60);color:#fff!important;box-shadow:0 8px 18px rgba(21,75,53,.36);transform:translateY(-1px)}
 .coords{font-family:Consolas,monospace;font-size:11px;color:#475569}
+.bairro-popup-count{
+    margin:13px 14px 8px;padding:9px 10px;border-radius:9px;
+    background:rgba(35,105,167,.09);border:1px solid rgba(35,105,167,.18);
+    color:var(--navy);font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em
+}
+.bairro-school-list{display:flex;flex-direction:column;gap:6px;margin:0 14px 14px;max-height:190px;overflow-y:auto;overflow-x:hidden}
+.bairro-school-link{
+    width:100%;border:1px solid rgba(35,105,167,.18);border-radius:8px;
+    padding:8px 9px;text-align:left;background:rgba(255,255,255,.74);
+    color:var(--blue-deep);font:700 12px/1.25 "Segoe UI",Inter,Arial,sans-serif;
+    cursor:pointer;transition:background .18s ease,border-color .18s ease,color .18s ease
+}
+.bairro-school-link:hover,.bairro-school-link:focus-visible{
+    background:#eaf3fb;border-color:#2369a7;color:#174d82;outline:none
+}
+.bairro-empty{margin:0 14px 15px;color:var(--muted);font-size:12px}
 .legend-label{white-space:nowrap;flex:1;min-width:0}
 .bairro-label{
     --bairro-label-size:12px;
@@ -237,9 +248,9 @@ html,body{margin:0;padding:0;height:100%;font-family:"Segoe UI",Inter,Arial,sans
     .brand-icon{width:36px;height:36px;font-size:19px}
     #top-actions{flex:1}.search-wrap{flex:1}
     #buscaUnidade{width:100%}#btnBuscar{padding:10px}
-    #map{height:calc(100% - 76px)}
-    .sidebar{right:8px;top:76px;min-width:175px}
-    .dashboard{left:55px;top:76px}
+    #map{height:calc(100% - 80px)}
+    .sidebar{right:8px;top:84px;min-width:175px}
+    .dashboard{left:55px;top:84px}
     .dashboard.expanded{width:245px;min-width:245px}
 }
 </style>
@@ -251,21 +262,21 @@ html,body{margin:0;padding:0;height:100%;font-family:"Segoe UI",Inter,Arial,sans
     <div class="brand">
         <div class="brand-icon"><svg class="brand-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11M2.5 20h19M8 20v-5h8v5M8 10h.01M12 10h.01M16 10h.01M8 12.5h.01M12 12.5h.01M16 12.5h.01"/></svg></div>
         <div>
-            <h1>SME-CUIABÁ</h1>
-            <small>Secretaria Municipal de Educação de Cuiabá</small>
+            <h1>GEOPORTAL SME-CUIABÁ</h1>
+            <small>Portal geográfico • Secretaria Municipal de Educação</small>
         </div>
     </div>
 
     <div id="top-actions">
         <div class="search-wrap">
             <input type="text" id="buscaUnidade"
-                   placeholder="Buscar unidade de ensino..."
+                   placeholder="Pesquisar unidade, bairro ou endereço..."
                    list="listaUnidades"
                    autocomplete="off">
             <span class="search-icon">⌕</span>
             <datalist id="listaUnidades"></datalist>
         </div>
-        <button id="btnBuscar" onclick="buscarUnidade()">Buscar</button>
+        <button id="btnBuscar" onclick="buscarUnidade()">Consultar</button>
     </div>
 </div>
 
@@ -278,23 +289,24 @@ html,body{margin:0;padding:0;height:100%;font-family:"Segoe UI",Inter,Arial,sans
     <div class="dashboard-header" onclick="toggleDashboard()">
         <div class="dashboard-title">
             <span class="emoji">⌂</span>
-            <span class="text">Unidades de Ensino</span>
+            <span class="text">UNIDADES POR BAIRRO</span>
         </div>
         <button class="toggle" onclick="event.stopPropagation();toggleDashboard()">×</button>
     </div>
     <div class="dashboard-content">
         <div class="stat">
             <div class="stat-value" id="total-unidades">0</div>
-            <div class="stat-label">Unidades cadastradas</div>
+            <div class="stat-label">Unidades de ensino</div>
         </div>
+        <div class="summary-heading">Unidades existentes por bairro</div>
         <div class="region-list" id="region-list"></div>
     </div>
-    <div class="dashboard-footer">Clique no ícone ⌂ para expandir</div>
+    <div class="dashboard-footer">Abrir painel de informações</div>
 </div>
 
 <!-- LEGENDA: SOMENTE AS DUAS CAMADAS -->
 <div class="sidebar">
-    <h3>Camadas</h3>
+    <h3>Camadas do mapa</h3>
 
     <div class="legend-item">
         <input type="checkbox" checked onchange="toggleLayer(unidadesLayer,this)">
@@ -311,7 +323,7 @@ html,body{margin:0;padding:0;height:100%;font-family:"Segoe UI",Inter,Arial,sans
 
 <!-- MAPAS BASE -->
 <div id="basemapControl">
-    <button id="basemapBtn" onclick="toggleBasemap()">🌐</button>
+    <button id="basemapBtn" onclick="toggleBasemap()" title="Selecionar base cartográfica">◫</button>
     <div id="basemapOptions">
         <label><input type="radio" name="bm" onclick="setBasemap('gsat')" checked> Google Satélite</label>
         <label><input type="radio" name="bm" onclick="setBasemap('gmap')"> Google Maps</label>
@@ -422,17 +434,17 @@ let regioes = {};
 // ÍCONE SOFISTICADO DAS UNIDADES
 // ============================================================
 function tamanhoIcone(){
-    // Ícones discretos na abertura e maiores conforme o usuário aproxima.
-    // z12 ≈ 18 px; z15 ≈ 26 px; z18+ ≈ 35 px.
+    // Ícones compactos na abertura para evitar sobreposição.
+    // z12 ≈ 13 px; z15 ≈ 20 px; z18+ ≈ 27 px.
     const z = map.getZoom();
-    return Math.max(14, Math.min(42, 12 + (z - 10) * 2.8));
+    return Math.max(10, Math.min(40, 8 + (z - 10) * 2.4));
 }
 
-function criarIconeUnidade(destaque=false){
+function criarIconeUnidade(){
     const s = tamanhoIcone();
     return L.divIcon({
         className:"",
-        html:`<div class="school-icon ${destaque ? "search-highlight" : ""}"
+        html:`<div class="school-icon"
                     style="--school-size:${s}px"><svg class="school-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11M2.5 20h19M8 20v-5h8v5M8 10h.01M12 10h.01M16 10h.01M8 12.5h.01M12 12.5h.01M16 12.5h.01"/></svg></div>`,
         iconSize:[s,s],
         iconAnchor:[s/2,s/2],
@@ -481,6 +493,85 @@ function formatarNome(valor){
     return String(valor)
         .toLocaleLowerCase("pt-BR")
         .replace(/(^|[\s-])([a-zà-ÿ])/gi, (_, separador, letra) => separador + letra.toLocaleUpperCase("pt-BR"));
+}
+
+function pontoNoAnel(point, ring){
+    let dentro=false;
+    const x=point.lng;
+    const y=point.lat;
+
+    for(let i=0,j=ring.length-1;i<ring.length;j=i++){
+        const xi=ring[i].lng, yi=ring[i].lat;
+        const xj=ring[j].lng, yj=ring[j].lat;
+        const cruza=((yi>y)!==(yj>y)) && (x < (xj-xi)*(y-yi)/(yj-yi)+xi);
+        if(cruza) dentro=!dentro;
+    }
+    return dentro;
+}
+
+function pontoDentroBairro(point, latlngs){
+    if(!Array.isArray(latlngs) || !latlngs.length) return false;
+
+    // Um anel simples.
+    if(latlngs[0] && typeof latlngs[0].lat === "number"){
+        return pontoNoAnel(point,latlngs);
+    }
+
+    // Polígono: primeiro anel externo e demais anéis como furos.
+    if(latlngs[0] && latlngs[0][0] && typeof latlngs[0][0].lat === "number"){
+        if(!pontoNoAnel(point,latlngs[0])) return false;
+        return !latlngs.slice(1).some(furo=>pontoNoAnel(point,furo));
+    }
+
+    // MultiPolygon ou estrutura aninhada equivalente.
+    return latlngs.some(parte=>pontoDentroBairro(point,parte));
+}
+
+function escolasNoBairro(layer){
+    const geometria=layer.getLatLngs ? layer.getLatLngs() : [];
+    return unidadeMarkers.filter(marker=>pontoDentroBairro(marker.getLatLng(),geometria));
+}
+
+function popupBairro(layer){
+    const nome=formatarNome(layer.nomeBairro || "-");
+    const escolas=escolasNoBairro(layer);
+    const quantidade=escolas.length;
+
+    const lista=quantidade
+        ? `<div class="bairro-school-list">${escolas.map(marker=>`
+            <button type="button" class="bairro-school-link"
+                    onclick="event.stopPropagation();focarUnidadeNoBairro(${marker._leaflet_id})">
+                <span>⌖</span> ${escapeHTML(marker.unidadeNome || "Unidade de Ensino")}
+            </button>`).join("")}</div>`
+        : `<div class="bairro-empty">Nenhuma unidade de ensino localizada neste bairro.</div>`;
+
+    return `
+        <div class="popup-title"><span class="popup-title-mark">⌂</span> ${escapeHTML(nome)}</div>
+        <div class="bairro-popup-count">${quantidade} ${quantidade === 1 ? "escola existente" : "escolas existentes"}</div>
+        ${lista}
+    `;
+}
+
+function focarUnidadeNoBairro(markerId){
+    const marker=unidadeMarkers.find(item=>item._leaflet_id===markerId);
+    if(!marker) return;
+
+    if(!map.hasLayer(unidadesLayer)) map.addLayer(unidadesLayer);
+
+    // Fecha o popup do bairro antes de mover o mapa para evitar tremores.
+    map.closePopup();
+    removerDestaqueTodos();
+    unidadeSelecionada=marker;
+    marker.setIcon(criarIconeUnidade(true));
+
+    map.flyTo(marker.getLatLng(),Math.max(17,map.getZoom()),{
+        animate:true,
+        duration:1.1
+    });
+
+    // Abre o popup somente quando o deslocamento terminar.
+    map.once("moveend",()=>marker.openPopup());
+    mostrarMensagem("Unidade localizada: "+marker.unidadeNome);
 }
 
 // ============================================================
@@ -565,7 +656,7 @@ fetch(URL_UNIDADES)
 
     unidadesFeatures=data.features || [];
 
-    const grupoRegioes={};
+    const grupoBairros={};
 
     data.features.forEach(feature=>{
 
@@ -576,8 +667,8 @@ fetch(URL_UNIDADES)
             listaUnidades.add(nome);
         }
 
-        const regional=p.REGIONAL_1 || "Sem regional";
-        grupoRegioes[regional]=(grupoRegioes[regional] || 0)+1;
+        const bairro=formatarNome(p.NOMES_BAIRROS || "Sem bairro");
+        grupoBairros[bairro]=(grupoBairros[bairro] || 0)+1;
 
         const coords=feature.geometry.coordinates;
 
@@ -612,7 +703,7 @@ fetch(URL_UNIDADES)
         unidadeMarkers.push(marker);
     });
 
-    regioes=grupoRegioes;
+    regioes=grupoBairros;
 
     document.getElementById("total-unidades").textContent=data.features.length;
     montarResumoRegioes();
@@ -663,19 +754,11 @@ fetch(URL_BAIRROS)
                 interactive:false
             });
 
-            layer.bindPopup(`
-                <div class="popup-title">📍 Bairro</div>
-                <table class="popup-table">
-                    <tr>
-                        <td>Nome</td>
-                        <td><b>${escapeHTML(nome)}</b></td>
-                    </tr>
-                    <tr>
-                        <td>Região</td>
-                        <td>${escapeHTML(controle)}</td>
-                    </tr>
-                </table>
-            `);
+            layer.bindPopup(()=>popupBairro(layer),{
+                maxWidth:360,
+                minWidth:280,
+                autoPan:true
+            });
         }
     });
 
@@ -780,24 +863,14 @@ function destacarUnidade(marker){
 
     const latlng=marker.getLatLng();
 
+    map.closePopup();
     map.flyTo(latlng,17,{
         animate:true,
         duration:1.4
     });
 
-    setTimeout(()=>{
-        marker.openPopup();
-    },900);
-
+    map.once("moveend",()=>marker.openPopup());
     mostrarMensagem("Unidade localizada: "+marker.unidadeNome);
-
-    // Retira a animação depois de alguns segundos,
-    // mas mantém a unidade selecionada.
-    setTimeout(()=>{
-        if(unidadeSelecionada===marker){
-            marker.setIcon(criarIconeUnidade(false));
-        }
-    },7000);
 }
 
 function removerDestaqueTodos(){
