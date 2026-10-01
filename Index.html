@@ -84,6 +84,7 @@ html,body{margin:0;padding:0;height:100%;font-family:"Segoe UI",Inter,Arial,sans
     border:2px solid #2a9a60;box-shadow:inset 0 0 0 2px rgba(255,255,255,.35)
 }
 
+
 .dashboard{
     position:absolute;left:80px;top:100px;width:58px;min-width:58px;
     background:var(--panel);border:1px solid rgba(255,255,255,.84);border-radius:7px;
@@ -202,6 +203,16 @@ html,body{margin:0;padding:0;height:100%;font-family:"Segoe UI",Inter,Arial,sans
     border:1px solid rgba(215,173,55,.55);transition:.2s ease
 }
 .maps-btn:hover{background:linear-gradient(135deg,#207c4d,#2a9a60);color:#fff!important;box-shadow:0 8px 18px rgba(21,75,53,.36);transform:translateY(-1px)}
+
+.print-btn{
+    display:flex;align-items:center;justify-content:center;gap:7px;
+    width:calc(100% - 28px);margin:0 14px 15px;padding:10px 9px;
+    border:1px solid rgba(21,75,53,.28);border-radius:9px;background:#eef7f0;
+    color:#15583b;font:800 12px "Segoe UI",Inter,Arial,sans-serif;cursor:pointer;
+    transition:background .18s ease,border-color .18s ease,color .18s ease
+}
+.print-btn:hover{background:#dcefe2;border-color:#207c4d;color:#103e2b}
+.print-glyph{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
 .coords{font-family:Consolas,monospace;font-size:11px;color:#475569}
 .bairro-popup-count{
     margin:13px 14px 8px;padding:9px 10px;border-radius:9px;
@@ -252,6 +263,14 @@ html,body{margin:0;padding:0;height:100%;font-family:"Segoe UI",Inter,Arial,sans
 }
 .leaflet-popup-content{margin:12px 14px}
 .leaflet-control-layers{display:none}
+.leaflet-draw-toolbar .leaflet-control-print-item{
+    display:flex;align-items:center;justify-content:center;
+    background:#fff;color:#56616b;
+    border-top:1px solid #ddd;cursor:pointer
+}
+.leaflet-draw-toolbar .leaflet-control-print-item:hover{background:#f4f6f8;color:#15583b}
+.leaflet-control-print-item .print-glyph{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
 @media(max-width:700px){
     #header{height:auto;min-height:68px;padding:8px 10px;gap:7px}
     .brand h1{font-size:14px}.brand small{font-size:9px}
@@ -294,7 +313,7 @@ html,body{margin:0;padding:0;height:100%;font-family:"Segoe UI",Inter,Arial,sans
 
 <div id="searchMessage" class="search-message"></div>
 
-<!-- PAINEL RESUMO -->
+<!-- PAINEL RESUMO E FERRAMENTAS -->
 <div class="dashboard" id="dashboard">
     <div class="dashboard-header" onclick="toggleDashboard()">
         <div class="dashboard-title">
@@ -303,6 +322,7 @@ html,body{margin:0;padding:0;height:100%;font-family:"Segoe UI",Inter,Arial,sans
         </div>
         <button class="toggle" onclick="event.stopPropagation();toggleDashboard()">×</button>
     </div>
+    <!-- PAINEL RESUMO -->
     <div class="dashboard-content">
         <div class="stat">
             <div class="stat-value" id="total-unidades">0</div>
@@ -420,6 +440,22 @@ const drawControl = new L.Control.Draw({
 });
 
 map.addControl(drawControl);
+
+// Impressão integrada à própria barra de desenho, junto de linhas, áreas e lixeira.
+const drawToolbarElement=document.querySelector(".leaflet-draw-toolbar");
+if(drawToolbarElement){
+    const printTool=document.createElement("a");
+    printTool.href="#";
+    printTool.className="leaflet-control-print-item";
+    printTool.title="Imprimir ficha A4 da unidade selecionada";
+    printTool.setAttribute("aria-label","Imprimir ficha A4 da unidade selecionada");
+    printTool.innerHTML='<svg class="print-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V4h12v5M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v6H6zM17 12h.01"/></svg>';
+    drawToolbarElement.appendChild(printTool);
+    L.DomEvent.on(printTool,"click",function(event){
+        L.DomEvent.stop(event);
+        imprimirUnidadeSelecionada();
+    });
+}
 
 map.on(L.Draw.Event.CREATED,function(e){
     const layer=e.layer;
@@ -600,7 +636,7 @@ function focarUnidadeNoBairro(markerId){
 // ============================================================
 // POPUP DA UNIDADE
 // ============================================================
-function popupUnidade(p){
+function popupUnidade(p,markerId){
 
     const nome = p.UNIDADE_1 || "-";
     const regional = formatarNome(regionalBruto(p.REGIONAL_1));
@@ -651,6 +687,7 @@ function popupUnidade(p){
                </a>`
             : ""
         }
+        ${markerId ? `<button type="button" class="print-btn" onclick="event.stopPropagation();imprimirUnidade(${markerId})"><svg class="print-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V4h12v5M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v6H6zM17 12h.01"/></svg> Imprimir ficha A4</button>` : ""}
     `;
 }
 
@@ -667,6 +704,96 @@ function escapeAttribute(value){
     return String(value).replaceAll('"',"&quot;");
 }
 
+function imprimirUnidadeSelecionada(){
+    if(!unidadeSelecionada){
+        mostrarMensagem("Selecione uma unidade no mapa para imprimir a ficha A4.");
+        return;
+    }
+    imprimirUnidade(unidadeSelecionada._leaflet_id);
+}
+
+function imprimirUnidade(markerId){
+    const marker=unidadeMarkers.find(item=>item._leaflet_id===markerId);
+    if(!marker) return;
+
+    const p=marker.feature?.properties || {};
+    const nome=p.UNIDADE_1 || marker.unidadeNome || "Unidade de Ensino";
+    const regional=formatarNome(regionalBruto(p.REGIONAL_1));
+    const bairro=formatarNome(p.NOMES_BAIRROS || "-");
+    const endereco=p.ENDERECO_1 || "-";
+    const longitude=Number(p.X_1 ?? p.X1 ?? marker.getLatLng().lng);
+    const latitude=Number(p.Y_1 ?? p.Y1 ?? marker.getLatLng().lat);
+    const janela=window.open("","_blank","width=980,height=900");
+
+    if(!janela){
+        mostrarMensagem("Permita a abertura de janelas para gerar a ficha de impressão.");
+        return;
+    }
+
+    const conteudo=`<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ficha A4 - ${escapeHTML(nome)}</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+@page{size:A4 portrait;margin:0}
+*{box-sizing:border-box}
+html,body{margin:0;background:#fff;color:#24372d;font-family:"Segoe UI",Arial,sans-serif}
+.print-page{width:100%;min-height:100vh;max-width:none;margin:0;padding:10mm;display:flex;flex-direction:column}
+.print-kicker{color:#207c4d;font-size:10pt;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:5mm}
+h1{margin:0 0 6mm;padding-bottom:4mm;color:#154b35;font-size:21pt;line-height:1.15;border-bottom:3px solid #d7ad37}
+.section-title{margin:0;padding:3mm 4mm;background:#154b35;color:#fff;font-size:11pt;font-weight:800}
+.print-page>section:first-of-type{display:block}.map-frame{flex:none;height:145mm;min-height:145mm;border:1px solid #a8c2b0;border-top:0;background:#e7f0e9}
+#map-print{width:100%;height:100%}
+.info-box{margin-top:4mm;border:1px solid #bfd2c4;border-radius:3px;overflow:hidden}
+.info-row{display:grid;grid-template-columns:37mm 1fr;border-bottom:1px solid #e3ece5;font-size:10pt}
+.info-row:last-child{border-bottom:0}
+.info-label{padding:3mm 4mm;background:#f0f6f1;color:#15583b;font-weight:800}
+.info-value{padding:3mm 4mm;word-break:break-word}
+.print-footer{margin-top:8mm;padding-top:3mm;border-top:1px solid #d7ad37;color:#6b7b70;font-size:8pt;display:flex;justify-content:space-between}
+.print-actions{margin-top:7mm;display:flex;gap:8px}
+.print-actions button{padding:9px 14px;border:0;border-radius:4px;background:#15583b;color:#fff;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.print-actions .print-glyph{width:15px;height:15px}
+.print-actions button.secondary{background:#e9f1eb;color:#15583b}
+@media print{html,body{width:100%;min-height:100%}.print-page{width:100%;height:100vh;min-height:100vh;padding:10mm;display:flex;flex-direction:column}.print-actions{display:none}.leaflet-control-container{display:none}.map-frame{height:145mm;min-height:145mm;break-inside:avoid}.info-box{break-inside:avoid}}
+</style>
+</head>
+<body>
+<main class="print-page">
+    <div class="print-kicker">Geoportal SME-Cuiabá · Ficha da unidade</div>
+    <h1>${escapeHTML(nome)}</h1>
+    <section>
+        <h2 class="section-title">Mapa da unidade</h2>
+        <div class="map-frame"><div id="map-print"></div></div>
+    </section>
+    <section class="info-box">
+        <h2 class="section-title">Informações pertinentes à unidade</h2>
+        <div class="info-row"><div class="info-label">Nome</div><div class="info-value">${escapeHTML(nome)}</div></div>
+        <div class="info-row"><div class="info-label">Regional</div><div class="info-value">${escapeHTML(regional)}</div></div>
+        <div class="info-row"><div class="info-label">Bairro</div><div class="info-value">${escapeHTML(bairro)}</div></div>
+        <div class="info-row"><div class="info-label">Endereço</div><div class="info-value">${escapeHTML(endereco)}</div></div>
+        <div class="info-row"><div class="info-label">Coordenadas</div><div class="info-value">Latitude: ${latitude} · Longitude: ${longitude}</div></div>
+    </section>
+    <div class="print-footer"><span>Secretaria Municipal de Educação de Cuiabá</span><span>Formato A4</span></div>
+    <div class="print-actions"><button onclick="window.print()"><svg class="print-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V4h12v5M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v6H6zM17 12h.01"/></svg>Imprimir</button><button class="secondary" onclick="window.close()">Fechar</button></div>
+</main>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><\/script>
+<script>
+const printMap=L.map("map-print",{zoomControl:false,attributionControl:true}).setView([${latitude},${longitude}],17);
+L.tileLayer("https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}",{maxZoom:20,subdomains:["mt0","mt1","mt2","mt3"],attribution:"© Google"}).addTo(printMap);
+L.circleMarker([${latitude},${longitude}],{radius:8,color:"#d7ad37",weight:3,fillColor:"#207c4d",fillOpacity:1}).addTo(printMap).bindTooltip(${JSON.stringify(nome)}).openTooltip();
+printMap.whenReady(()=>setTimeout(()=>printMap.invalidateSize(true),150));
+window.addEventListener("load",()=>setTimeout(()=>printMap.invalidateSize(true),450));
+<\/script>
+</body>
+</html>`;
+
+    janela.document.open();
+    janela.document.write(conteudo);
+    janela.document.close();
+}
 // ============================================================
 // CARREGAR UNIDADES
 // ============================================================
@@ -709,7 +836,7 @@ fetch(URL_UNIDADES)
         marker.feature=feature;
         marker.unidadeNome=nome || "";
 
-        marker.bindPopup(popupUnidade(p),{
+        marker.bindPopup(popupUnidade(p,marker._leaflet_id),{
             maxWidth:360,
             minWidth:280,
             autoPan:true
