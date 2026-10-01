@@ -90,7 +90,7 @@ html,body{margin:0;padding:0;height:100%;font-family:"Segoe UI",Inter,Arial,sans
     box-shadow:var(--shadow);z-index:1100;overflow:hidden;backdrop-filter:blur(14px);
     transition:.25s
 }
-.dashboard.expanded{width:275px;min-width:275px}
+.dashboard.expanded{width:275px;min-width:275px;max-height:calc(100vh - 120px);display:flex;flex-direction:column}
 .dashboard-header{
     height:58px;display:flex;align-items:center;justify-content:center;
     cursor:pointer;background:#fff
@@ -106,7 +106,7 @@ html,body{margin:0;padding:0;height:100%;font-family:"Segoe UI",Inter,Arial,sans
 .toggle{border:0;background:transparent;font-size:18px;color:#64748b;cursor:pointer;display:none}
 .dashboard.expanded .toggle{display:block}
 .dashboard-content{display:none;padding:14px}
-.dashboard.expanded .dashboard-content{display:block}
+.dashboard.expanded .dashboard-content{display:block;min-height:0;overflow-y:auto;overflow-x:hidden}
 .stat{
     background:#f5f8fb;border-radius:10px;padding:15px;text-align:center;
     border:1px solid #e7edf4
@@ -124,7 +124,17 @@ html,body{margin:0;padding:0;height:100%;font-family:"Segoe UI",Inter,Arial,sans
     display:none;font-size:10px;color:#7b8794;text-align:center;
     padding:7px;background:#f8fafc
 }
-.dashboard.expanded .dashboard-footer{display:block}
+.dashboard.expanded .dashboard-footer{display:block;flex:none}
+.data-note{
+    margin-top:14px;padding:11px 12px;border:1px solid rgba(215,173,55,.55);
+    border-left:3px solid var(--gold);border-radius:6px;background:#fffaf0;
+    color:#53665a;font-size:10px;line-height:1.45
+}
+.data-note strong{display:block;margin-bottom:4px;color:var(--navy);font-size:11px}
+.data-note p{margin:0 0 7px}
+.data-note a{display:inline-block;margin-bottom:7px;color:var(--blue-deep);font-weight:800;text-decoration:none}
+.data-note a:hover{text-decoration:underline}
+.data-note address{font-style:normal;color:#64756a}
 
 #basemapControl{position:absolute;bottom:25px;left:20px;z-index:1500}
 #basemapBtn{
@@ -251,7 +261,7 @@ html,body{margin:0;padding:0;height:100%;font-family:"Segoe UI",Inter,Arial,sans
     #map{height:calc(100% - 80px)}
     .sidebar{right:8px;top:84px;min-width:175px}
     .dashboard{left:55px;top:84px}
-    .dashboard.expanded{width:245px;min-width:245px}
+    .dashboard.expanded{width:245px;min-width:245px;max-height:calc(100vh - 104px)}
 }
 </style>
 </head>
@@ -300,6 +310,19 @@ html,body{margin:0;padding:0;height:100%;font-family:"Segoe UI",Inter,Arial,sans
         </div>
         <div class="summary-heading">Unidades existentes por bairro</div>
         <div class="region-list" id="region-list"></div>
+        <div class="data-note">
+            <strong>Encontrou uma possível falha nos dados?</strong>
+            <p>Comunique a Secretaria Municipal de Educação para avaliação e atualização das informações.</p>
+            <a href="https://cuiaba.mt.gov.br/secretarias/educacao" target="_blank" rel="noopener noreferrer">
+                Comunicar à Secretaria Municipal de Educação ↗
+            </a>
+            <address>
+                Secretaria Municipal de Educação<br>
+                R. Diogo Domingos Ferreira, 292 - Bandeirantes, Cuiabá - MT, 78010-210<br>
+                Telefone: (65) 3645-6500<br>
+                Horário: Fechado · Abre qui. às 08:00
+            </address>
+        </div>
     </div>
     <div class="dashboard-footer">Abrir painel de informações</div>
 </div>
