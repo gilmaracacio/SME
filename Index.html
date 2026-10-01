@@ -101,6 +101,8 @@ html,body{margin:0;padding:0;height:100%;font-family:"Segoe UI",Inter,Arial,sans
     border-bottom:1px solid #e8edf3;background:#f8fafc
 }
 .dashboard-title{display:flex;align-items:center;gap:9px;color:#063b78;font-weight:700}
+.dashboard-legend-icon{width:25px;height:25px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;flex:none}
+.dashboard-legend-icon .school-glyph{width:15px;height:15px}
 .dashboard-title .emoji{font-size:22px}
 .dashboard-title .text{display:none}
 .dashboard.expanded .dashboard-title .text{display:block;font-size:14px}
@@ -317,7 +319,7 @@ html,body{margin:0;padding:0;height:100%;font-family:"Segoe UI",Inter,Arial,sans
 <div class="dashboard" id="dashboard">
     <div class="dashboard-header" onclick="toggleDashboard()">
         <div class="dashboard-title">
-            <span class="emoji">⌂</span>
+            <span class="legend-school dashboard-legend-icon"><svg class="school-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V9l8-5 8 5v11M2.5 20h19M8 20v-5h8v5M8 10h.01M12 10h.01M16 10h.01M8 12.5h.01M12 12.5h.01M16 12.5h.01"/></svg></span>
             <span class="text">UNIDADES POR BAIRRO</span>
         </div>
         <button class="toggle" onclick="event.stopPropagation();toggleDashboard()">×</button>
@@ -326,7 +328,7 @@ html,body{margin:0;padding:0;height:100%;font-family:"Segoe UI",Inter,Arial,sans
     <div class="dashboard-content">
         <div class="stat">
             <div class="stat-value" id="total-unidades">0</div>
-            <div class="stat-label">Unidades de ensino</div>
+            <div class="stat-label">UNIDADES POR BAIRRO</div>
         </div>
         <div class="summary-heading">Unidades existentes por bairro</div>
         <div class="region-list" id="region-list"></div>
