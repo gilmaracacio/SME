@@ -177,34 +177,34 @@ html,body{margin:0;padding:0;height:100%;font-family:"Segoe UI",Inter,Arial,sans
 
 .leaflet-popup-content-wrapper{
     padding:0;overflow:hidden;border:1px solid rgba(35,105,167,.35);
-    border-radius:16px;background:linear-gradient(155deg,#ffffff 0%,#f3f8fd 100%);
-    box-shadow:0 18px 42px rgba(16,43,78,.25)
+    border-radius:13px;background:linear-gradient(155deg,#ffffff 0%,#f3f8fd 100%);
+    box-shadow:0 14px 32px rgba(16,43,78,.22);max-width:min(340px,calc(100vw - 28px))
 }
 .leaflet-popup-tip{background:#f3f8fd}
-.leaflet-popup-content{margin:0;min-width:280px}
+.leaflet-popup-content{margin:0;min-width:240px;max-width:312px}
 .popup-title{
-    position:relative;margin:0;padding:15px 16px 14px;color:#fff;
+    position:relative;margin:0;padding:10px 12px 9px;color:#fff;
     background:linear-gradient(135deg,#103e2b 0%,#207c4d 100%);
-    font-size:15px;font-weight:800;letter-spacing:.01em;
+    font-size:13px;font-weight:800;letter-spacing:.01em;
     border-bottom:3px solid var(--gold)
 }
-.popup-title-mark{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;margin-right:5px;border:1px solid rgba(255,255,255,.55);border-radius:6px;font-size:15px;vertical-align:-3px}
+.popup-title-mark{display:inline-flex;align-items:center;justify-content:center;width:19px;height:19px;margin-right:4px;border:1px solid rgba(255,255,255,.55);border-radius:6px;font-size:13px;vertical-align:-2px}
 .popup-title:after{
     content:"";position:absolute;right:15px;top:14px;width:34px;height:18px;
     border-top:1px solid rgba(255,255,255,.55);border-bottom:1px solid rgba(255,255,255,.3);
     transform:skewX(-28deg);opacity:.7
 }
-.popup-table{width:calc(100% - 28px);margin:11px 14px 0;border-collapse:collapse;font-size:12px}
-.popup-table td{padding:7px 4px;vertical-align:top;border-bottom:1px solid rgba(148,163,184,.22)}
+.popup-table{width:calc(100% - 20px);margin:7px 10px 0;border-collapse:collapse;font-size:11px;table-layout:fixed}
+.popup-table td{padding:4px 3px;vertical-align:top;text-align:left;border-bottom:1px solid rgba(148,163,184,.22)}
 .popup-table tr:last-child td{border-bottom:0}
-.popup-table td:first-child{font-weight:700;color:#175d86;width:82px;text-transform:none;font-family:"Segoe UI",Inter,Arial,sans-serif;font-size:11px;letter-spacing:0}
-.popup-table td:last-child{color:#304b3c;font-family:"Segoe UI",Inter,Arial,sans-serif;font-size:11px;font-weight:500}
+.popup-table td:first-child{font-weight:700;color:#175d86;width:76px;text-transform:none;font-family:"Segoe UI",Inter,Arial,sans-serif;font-size:11px;letter-spacing:0;text-align:left}
+.popup-table td:last-child{color:#304b3c;font-family:"Segoe UI",Inter,Arial,sans-serif;font-size:11px;font-weight:500;text-align:left}
 .popup-table td:last-child b{color:#304b3c;font-weight:500}
 .popup-table tr.regional-row td:first-child{color:#175d86;font-family:"Segoe UI",Inter,Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:0;text-transform:none}
 .popup-table tr.regional-row td:last-child{color:#304b3c;font-family:"Segoe UI",Inter,Arial,sans-serif;font-size:11px;font-weight:500}
 .maps-btn{
-    display:block;margin:13px 14px 15px;text-align:center;text-decoration:none;
-    background:linear-gradient(135deg,#15583b,#207c4d);color:#fff!important;padding:11px 9px;
+    display:block;margin:9px 10px 10px;text-align:center;text-decoration:none;
+    background:linear-gradient(135deg,#15583b,#207c4d);color:#fff!important;padding:8px 7px;
     border-radius:9px;font-weight:800;letter-spacing:.01em;box-shadow:0 6px 14px rgba(21,75,53,.28);
     border:1px solid rgba(215,173,55,.55);transition:.2s ease
 }
@@ -268,11 +268,22 @@ html,body{margin:0;padding:0;height:100%;font-family:"Segoe UI",Inter,Arial,sans
     100%{opacity:0;transform:translate(-50%,-8px)}
 }
 .leaflet-popup-content{margin:12px 14px}
-.cadastro-heading{margin:13px 0 6px;padding-top:10px;border-top:1px solid #dce7f0;color:#207c4d;font-family:"Segoe UI",Inter,Arial,sans-serif;font-size:11px;font-weight:800;letter-spacing:.045em;text-transform:none}
-.cadastro-table{width:100%;border-collapse:collapse;font-family:"Segoe UI",Inter,Arial,sans-serif;font-size:11px;background:rgba(255,255,255,.7)}
-.cadastro-table td{padding:5px 6px;border-bottom:1px solid #e6eef4;vertical-align:top;line-height:1.35}
-.cadastro-table td:first-child{width:34%;color:#175d86;font-weight:700}
+.popup-data-heading{margin:8px 10px 0;padding:6px 0 4px;border-top:1px solid #dce7f0;color:#207c4d;font-family:"Segoe UI",Inter,Arial,sans-serif;font-size:11px;font-weight:800;letter-spacing:.045em}
+.cadastro-heading{margin:8px 10px 4px;padding-top:6px;border-top:1px solid #dce7f0;color:#207c4d;font-family:"Segoe UI",Inter,Arial,sans-serif;font-size:11px;font-weight:800;letter-spacing:.045em;text-transform:none}
+.cadastro-table{width:calc(100% - 20px);margin:0 10px;border-collapse:collapse;font-family:"Segoe UI",Inter,Arial,sans-serif;font-size:11px;background:rgba(255,255,255,.7)}
+.cadastro-table td{padding:4px 3px;text-align:left;border-bottom:1px solid #e6eef4;vertical-align:top;line-height:1.35}
+.cadastro-table td:first-child{width:76px;color:#175d86;font-weight:700}
 .cadastro-table td:last-child{color:#304b3c;font-weight:500;word-break:break-word}
+
+
+@media (max-width:520px){
+    .leaflet-popup-content-wrapper{max-width:calc(100vw - 18px);border-radius:11px}
+    .leaflet-popup-content{min-width:0;width:calc(100vw - 42px);max-width:300px}
+    .popup-table,.cadastro-table{font-size:10px}
+    .popup-table td:first-child,.cadastro-table td:first-child{width:72px;font-size:10px}
+    .popup-table td:last-child,.cadastro-table td:last-child{font-size:10px;overflow-wrap:anywhere}
+    .popup-title{font-size:12px;padding:9px 10px 8px}
+}
 
 .leaflet-control-layers{display:none}
 .leaflet-draw-toolbar .leaflet-control-print-item{
@@ -390,8 +401,9 @@ html,body{margin:0;padding:0;height:100%;font-family:"Segoe UI",Inter,Arial,sans
 // ============================================================
 // CONFIGURAÇÃO
 // ============================================================
+// Banco V2: campos CODIGO_INEP, UNIDADE2, REGIONAL, ENDEREÇO, CEP1, LONGITUDE, LATITUDE e cadastro da unidade.
 const URL_UNIDADES =
-    "https://raw.githubusercontent.com/gilmaracacio/SME/main/UnidadesEnsino.geojson";
+    "https://raw.githubusercontent.com/gilmaracacio/SME/main/UnidadesEnsinoV2.geojson";
 
 const URL_BAIRROS =
     "https://raw.githubusercontent.com/gilmaracacio/SME/main/Bairros.geojson";
@@ -565,6 +577,15 @@ function formatarNome(valor){
         .replace(/(^|[\s-])([a-zà-ÿ])/gi, (_, separador, letra) => separador + letra.toLocaleUpperCase("pt-BR"));
 }
 
+function formatarEndereco(valor){
+    if(!valor) return "-";
+    let texto=formatarNome(valor);
+    texto=texto.replace(/\bDe\b/g,"de").replace(/\bDa\b/g,"da").replace(/\bDo\b/g,"do")
+        .replace(/\bDas\b/g,"das").replace(/\bDos\b/g,"dos").replace(/\bE\b/g,"e")
+        .replace(/\bMt\b/g,"MT").replace(/\bCep\b/g,"CEP");
+    return texto;
+}
+
 function pontoNoAnel(point, ring){
     let dentro=false;
     const x=point.lng;
@@ -670,19 +691,27 @@ function linhaCadastro(rotulo,valor){
 // ============================================================
 function popupUnidade(p,markerId){
 
-    const nome = p.UNIDADE_1 || "-";
-    const regional = formatarNome(regionalBruto(p.REGIONAL_1));
+    const nome = p.UNIDADE2 || p.UNIDADE || "-";
+    const regional = formatarNome(regionalBruto(p.REGIONAL));
     const bairro = formatarNome(p.NOMES_BAIRROS || "-");
-    const endereco = p.ENDERECO_1 || "-";
+    const endereco = formatarEndereco(p["ENDEREÇO"] || p.Endereco1 || "-");
+    const codigoInep = p.CODIGO_INEP ?? "-";
 
-    // O GeoJSON atual possui X_1/Y_1.
-    // X1/Y1 também são aceitos caso os campos sejam renomeados no futuro.
-    const longitude = p.X_1 ?? p.X1 ?? "-";
-    const latitude  = p.Y_1 ?? p.Y1 ?? "-";
+    // O GeoJSON V2 fornece LONGITUDE/LATITUDE; os fallbacks preservam compatibilidade.
+    const longitude = p.LONGITUDE ?? p.X_1 ?? p.X1 ?? "-";
+    const latitude  = p.LATITUDE ?? p.Y_1 ?? p.Y1 ?? "-";
 
     const linkMaps = p.LINK || "";
-    const cadastro = buscarCadastro(nome);
-    const cadastroHTML = cadastro ? `
+    const cadastroAntigo = buscarCadastro(nome);
+    const cadastro = {
+        codigoInep: p.CODIGO_INEP ?? "",
+        direcao: p.Diretor || cadastroAntigo?.direcao || "",
+        coordenacao: p.Coordenador || cadastroAntigo?.coordenacao || "",
+        secretaria: p["Secretário"] || cadastroAntigo?.secretaria || "",
+        email: p.EMAIL || p.Email1 || cadastroAntigo?.email || "",
+        telefone: p.Telefone1 || cadastroAntigo?.telefone || ""
+    };
+    const cadastroHTML = (cadastro.direcao || cadastro.coordenacao || cadastro.secretaria || cadastro.email || cadastro.telefone) ? `
         <div class="cadastro-heading">Conforme dados de Cadastro</div>
         <table class="cadastro-table">
             ${linhaCadastro("Direção",cadastro.direcao)}
@@ -694,8 +723,12 @@ function popupUnidade(p,markerId){
 
     return `
         <div class="popup-title"><span class="popup-title-mark">⌂</span> ${escapeHTML(nome)}</div>
-
+        <div class="popup-data-heading">Cadastro Unidade de Ensino</div>
         <table class="popup-table">
+            <tr>
+                <td>Código INEP</td>
+                <td>${escapeHTML(codigoInep)}</td>
+            </tr>
             <tr class="regional-row">
                 <td>Regional</td>
                 <td>${escapeHTML(regional)}</td>
@@ -760,12 +793,12 @@ function imprimirUnidade(markerId){
     if(!marker) return;
 
     const p=marker.feature?.properties || {};
-    const nome=p.UNIDADE_1 || marker.unidadeNome || "Unidade de Ensino";
-    const regional=formatarNome(regionalBruto(p.REGIONAL_1));
+    const nome=p.UNIDADE2 || p.UNIDADE || marker.unidadeNome || "Unidade de Ensino";
+    const regional=formatarNome(regionalBruto(p.REGIONAL));
     const bairro=formatarNome(p.NOMES_BAIRROS || "-");
-    const endereco=p.ENDERECO_1 || "-";
-    const longitude=Number(p.X_1 ?? p.X1 ?? marker.getLatLng().lng);
-    const latitude=Number(p.Y_1 ?? p.Y1 ?? marker.getLatLng().lat);
+    const endereco=p["ENDEREÇO"] || p.Endereco1 || "-";
+    const longitude=Number(p.LONGITUDE ?? p.X_1 ?? p.X1 ?? marker.getLatLng().lng);
+    const latitude=Number(p.LATITUDE ?? p.Y_1 ?? p.Y1 ?? marker.getLatLng().lat);
     const janela=window.open("","_blank","width=980,height=900");
 
     if(!janela){
@@ -854,7 +887,7 @@ fetch(URL_UNIDADES)
     data.features.forEach(feature=>{
 
         const p=feature.properties || {};
-        const nome=p.UNIDADE_1;
+        const nome=p.UNIDADE2 || p.UNIDADE || "";
 
         if(nome){
             listaUnidades.add(nome);
@@ -880,8 +913,8 @@ fetch(URL_UNIDADES)
         marker.unidadeNome=nome || "";
 
         marker.bindPopup(popupUnidade(p,marker._leaflet_id),{
-            maxWidth:360,
-            minWidth:280,
+            maxWidth:320,
+            minWidth:240,
             autoPan:true
         });
 
