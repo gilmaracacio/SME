@@ -285,6 +285,8 @@ html,body{margin:0;padding:0;height:100%;font-family:"Segoe UI",Inter,Arial,sans
     .popup-title{font-size:12px;padding:9px 10px 8px}
 }
 
+.leaflet-draw-edit-edit,.leaflet-draw-edit-remove{display:none !important}
+
 .leaflet-control-layers{display:none}
 .leaflet-draw-toolbar .leaflet-control-print-item{
     display:flex;align-items:center;justify-content:center;
@@ -452,7 +454,7 @@ function toggleBasemap(){
 const drawnItems = new L.FeatureGroup().addTo(map);
 
 const drawControl = new L.Control.Draw({
-    edit:{featureGroup:drawnItems},
+    edit:false,
     draw:{
         polygon:true,
         polyline:true,
@@ -729,13 +731,13 @@ function popupUnidade(p,markerId){
                 <td>Código INEP</td>
                 <td>${escapeHTML(codigoInep)}</td>
             </tr>
-            <tr>
-                <td>Nome</td>
-                <td><b>${escapeHTML(nome)}</b></td>
-            </tr>
             <tr class="regional-row">
                 <td>Regional</td>
                 <td>${escapeHTML(regional)}</td>
+            </tr>
+            <tr>
+                <td>Nome</td>
+                <td><b>${escapeHTML(nome)}</b></td>
             </tr>
             <tr>
                 <td>Bairro</td>
